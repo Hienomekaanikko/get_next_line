@@ -6,7 +6,7 @@
 
 char	*get_next_line(int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
-int		ft_strlen(char *str);
+int		ft_strlen(const char *str);
 char	*ft_strchr(const char *s, int c);
 
 #endif

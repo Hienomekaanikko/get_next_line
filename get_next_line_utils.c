@@ -1,4 +1,4 @@
-#include "get_next_line.h";
+#include "get_next_line.h"
 
 char	*ft_strchr(const char *s, int c)
 {
@@ -50,7 +50,7 @@ void *ft_memset(void *dest, int x, size_t n)
 	return (void *)dest;
 }
 
-int	ft_strlen(char *str)
+int	ft_strlen(const char *str)
 {
 	int	i;
 
