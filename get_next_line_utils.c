@@ -75,24 +75,41 @@ void	*ft_calloc(size_t count, size_t size)
 	ft_memset(ptr, 0, count * size);
 	return (ptr);
 }
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*new_str;
-	int		total_length;
-	int		s1_len;
-	int		s2_len;
 
-	if (!s1 || !s2)
+char	*ft_strdup(const char *s)
+{
+	char	*ptr;
+	int		size;
+	int		i;
+
+	size = ft_strlen(s);
+	ptr = malloc(1 + size * sizeof(char));
+	if (ptr == NULL)
 		return (NULL);
-	s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
-	total_length = s1_len + s2_len + 1;
-	new_str = ft_calloc(total_length, sizeof(char));
-	if (new_str == NULL)
-		return (NULL);
-	ft_memmove(new_str, s1, s1_len);
-	ft_memmove(new_str + s1_len, s2, s2_len);
-	return (new_str);
+	i = 0;
+	while (s[i] != '\0')
+	{
+		ptr[i] = s[i];
+		i++;
+	}
+	ptr[i] = '\0';
+	return (ptr);
 }
 
+void	*ft_memcpy(void *to, const void *from , size_t n)
+{
+	const char *from_temp;
+	char *to_temp;
+	int	i;
 
+	from_temp = from;
+	to_temp = to;
+	i = 0;
+	while (n > 0)
+	{
+		to_temp[i] = from_temp[i];
+		n--;
+		i++;
+	}
+	return (0);
+}
