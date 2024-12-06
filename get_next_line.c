@@ -6,13 +6,13 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/06 13:38:58 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/06 14:47:36 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*add_to_curr(char *buffer, char *stash)
+char	*add_to_buff(char *buffer, char *stash)
 {
 	char	*new_str;
 
@@ -26,28 +26,55 @@ char	*read_text(int fd, char *buffer)
 	size_t	byte_size;
 
 	stash = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!stash)
+		return (NULL);
 	byte_size = 1;
 	while (byte_size > 0)
 	{
+		if (byte_size == -1)
+			return (NULL);
 		byte_size = read(fd, stash, BUFFER_SIZE);
-		buffer = add_to_curr(buffer, stash);
+		buffer = add_to_buff(buffer, stash);
 		if (ft_strchr(stash, '\n'))
-		{
-			stash[byte_size] = '\0';
 			break ;
-		}
 	}
+	free(stash);
 	return (buffer);
+}
+char	*clean_line(char *stash)
+{
+	int		length;
+	int		i;
+	char	*cleaned_line;
+
+	length = 0;
+	while (stash[length] != '\n' && stash[length] != '\0')
+		length++;
+	cleaned_line = malloc((length + 1) * sizeof(char));
+	if (!cleaned_line)
+		return (NULL);
+	i = 0;
+	while (i < length)
+	{
+		cleaned_line[i] = stash[i];
+		i++;
+	}
+	cleaned_line[i] = '\0';
+	return (cleaned_line);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
+	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = ft_strdup("");
 	buffer = read_text(fd, buffer);
+	line = clean_line(buffer);
+
+	return (line);
 }
 
 int	main(void)
@@ -66,5 +93,6 @@ int	main(void)
 		i++;
 	}
 	write(1, "\n", 1);
+	free(buffer);
 	return (0);
 }
