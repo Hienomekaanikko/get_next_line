@@ -1,123 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
+/*   Updated: 2024/12/06 13:38:58 by msuokas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-#include <stdlib.h>
-#include <unistd.h>
 
-char *join_to_buf(char *result, char *buffer)
+char	*add_to_curr(char *buffer, char *stash)
 {
-	char *new;
-	size_t result_len, buffer_len;
+	char	*new_str;
 
-	if (!result)
-		return ft_strdup(buffer);
-	if (!buffer)
-		return NULL;
-	result_len = ft_strlen(result);
-	buffer_len = ft_strlen(buffer);
-	new = malloc(sizeof(char) * (result_len + buffer_len + 1));
-	if (!new)
-		return NULL;
-	ft_memcpy(new, result, result_len);
-	ft_memcpy(new + result_len, buffer, buffer_len);
-	new[result_len + buffer_len] = '\0';
-	free(result);
-	return new;
+	new_str = ft_strjoin(buffer, stash);
+	free(buffer);
+	return (new_str);
 }
-
-char *get_line(int fd, char *result)
+char	*read_text(int fd, char *buffer)
 {
-	char *buffer;
-	int byte_count;
+	char	*stash;
+	size_t	byte_size;
 
-	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
-		return NULL;
-	byte_count = 1;
-	while (byte_count > 0)
+	stash = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	byte_size = 1;
+	while (byte_size > 0)
 	{
-		byte_count = read(fd, buffer, BUFFER_SIZE);
-		if (byte_count == -1)
+		byte_size = read(fd, stash, BUFFER_SIZE);
+		buffer = add_to_curr(buffer, stash);
+		if (ft_strchr(stash, '\n'))
 		{
-			free(buffer);
-			return NULL;
+			stash[byte_size] = '\0';
+			break ;
 		}
-		buffer[byte_count] = '\0';
-		result = join_to_buf(result, buffer);
-		if (!result || ft_strchr(buffer, '\n'))
-		break;
 	}
-	free(buffer);
-	return result;
+	return (buffer);
 }
 
-char *clean_line(char *line)
+char	*get_next_line(int fd)
 {
-	char *cleaned_line;
-	int i;
-
-	if (!line)
-		return NULL;
-	i = 0;
-	while (line[i] && line[i] != '\n')
-		i++;
-	cleaned_line = malloc((i + 2) * sizeof(char));
-	if (!cleaned_line)
-		return NULL;
-	i = 0;
-	while (line[i] && line[i] != '\n')
-	{
-		cleaned_line[i] = line[i];
-		i++;
-	}
-	if (line[i] == '\n')
-	{
-		cleaned_line[i] = '\n';
-		i++;
-	}
-	cleaned_line[i] = '\0';
-	return cleaned_line;
-}
-
-char *remove_first_line(char *buffer)
-{
-	char *new_buffer;
-	int i, j;
-
-	if (!buffer)
-		return NULL;
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	if (!buffer[i])
-	{
-		free(buffer);
-		return NULL;
-	}
-	new_buffer = malloc((ft_strlen(buffer) - i + 1) * sizeof(char));
-	if (!new_buffer)
-	{
-		free(buffer);
-		return NULL;
-	}
-	i++;
-	j = 0;
-	while (buffer[i])
-		new_buffer[j++] = buffer[i++];
-	new_buffer[j] = '\0';
-	free(buffer);
-	return new_buffer;
-}
-
-char *get_next_line(int fd)
-{
-	static char *buffer;
-	 char *line;
+	static char	*buffer;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return NULL;
-	buffer = get_line(fd, buffer);
-	if (!buffer)
-		return NULL;
-	line = clean_line(buffer);
-	buffer = remove_first_line(buffer);
-	return line;
+		return (NULL);
+	buffer = ft_strdup("");
+	buffer = read_text(fd, buffer);
+}
+
+int	main(void)
+{
+	char	*buffer;
+	int		i;
+	int		fd;
+
+	i = 0;
+	fd = open("hello.txt", O_RDONLY);
+	buffer = get_next_line(fd);
+
+	while (buffer[i])
+	{
+		write(1, &buffer[i], 1);
+		i++;
+	}
+	write(1, "\n", 1);
+	return (0);
 }
