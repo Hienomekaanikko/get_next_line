@@ -6,11 +6,13 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/06 14:47:36 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/06 15:56:56 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+TODO: MAKE THE FUNCTION TO UPDATE THE BUFFER WITH REMOVED REMAINDER
 
 char	*add_to_buff(char *buffer, char *stash)
 {
@@ -86,7 +88,8 @@ int	main(void)
 	i = 0;
 	fd = open("hello.txt", O_RDONLY);
 	buffer = get_next_line(fd);
-
+	if (!buffer)
+		return (0);
 	while (buffer[i])
 	{
 		write(1, &buffer[i], 1);
