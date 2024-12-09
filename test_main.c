@@ -1,14 +1,30 @@
-#include "get_next_line.h"
-#include <fcntl.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test_main.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/09 12:50:00 by msuokas           #+#    #+#             */
+/*   Updated: 2024/12/09 12:54:33 by msuokas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
+#include "get_next_line.h"
 
-//compile with  cc -D BUFFER_SIZE=42(or anything) get_next_line.c get_next_line_utils.c test_main.c -o test
-int main(int argc, char **argv)
+int	main(void)
 {
-	int		fd = open(argv[1], O_RDONLY);
-	char	*line;
+	int fd;
+	char *line;
 
-	while ((line = get_next_line(fd)) != NULL)
+	fd = open("hello.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		return 1;
+	}
+
+	while ((line = get_next_line(fd)) != 0)
 	{
 		printf("%s", line);
 		free(line);

@@ -6,7 +6,7 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:13:29 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/06 11:28:55 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/09 14:04:23 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,38 +30,6 @@ char	*ft_strdup(const char *s)
 	}
 	ptr[i] = '\0';
 	return (ptr);
-}
-
-void	*ft_memset(void *dest, int x, size_t n)
-{
-	unsigned char	*temp;
-
-	temp = (unsigned char *)dest;
-	while (n > 0)
-	{
-		*temp = (unsigned char)x;
-		n--;
-		temp++;
-	}
-	return (dest);
-}
-
-void	*ft_memmove(void *dest, const void *src, size_t n)
-{
-	unsigned char	*to;
-	unsigned char	*from;
-
-	if (!dest && !src)
-		return (NULL);
-	to = (unsigned char *)dest;
-	from = (unsigned char *)src;
-	if (from < to && to < from + n)
-		while (n--)
-			to[n] = from[n];
-	else
-		while (n--)
-			*(to++) = *(from++);
-	return (dest);
 }
 
 char	*ft_strchr(const char *s, int c)
@@ -92,34 +60,31 @@ size_t	ft_strlen(const char *str)
 	}
 	return (count);
 }
-void	*ft_calloc(size_t count, size_t size)
-{
-	char		*ptr;
 
-	if (count != 0 && size != 0 && count > SIZE_MAX / size)
-		return (NULL);
-	ptr = malloc(count * size);
-	if (ptr == NULL)
-		return (NULL);
-	ft_memset(ptr, 0, count * size);
-	return (ptr);
-}
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*new_str;
-	int		total_length;
-	int		s1_len;
-	int		s2_len;
+	size_t	i;
+	size_t	y;
 
+	i = 0;
+	y = 0;
 	if (!s1 || !s2)
 		return (NULL);
-	s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
-	total_length = s1_len + s2_len + 1;
-	new_str = ft_calloc(total_length, sizeof(char));
+	new_str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (new_str == NULL)
 		return (NULL);
-	ft_memmove(new_str, s1, s1_len);
-	ft_memmove(new_str + s1_len, s2, s2_len);
+	while (i < ft_strlen(s1))
+	{
+		new_str[i] = s1[i];
+		i++;
+	}
+	while (y < ft_strlen(s2))
+	{
+		new_str[i] = s2[y];
+		i++;
+		y++;
+	}
+	new_str[i] = '\0';
 	return (new_str);
 }
