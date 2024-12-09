@@ -12,16 +12,16 @@
 
 #include "get_next_line.h"
 
-char	*add_to_buff(char *buffer, char *stash)
+static char	*add_to_buff(char *buffer, char *stash)
 {
-	char	*new_str;
+	char	*temp;
 
-	new_str = ft_strjoin(buffer, stash);
+	temp = ft_strjoin(buffer, stash);
 	free(buffer);
-	return (new_str);
+	return (temp);
 }
 
-char	*read_text(int fd, char *buffer)
+static char	*read_text(int fd, char *buffer)
 {
 	char	*stash;
 	ssize_t	bytes_read;
@@ -40,14 +40,12 @@ char	*read_text(int fd, char *buffer)
 		}
 		stash[bytes_read] = '\0';
 		buffer = add_to_buff(buffer, stash);
-		if (bytes_read == 0)
-			break;
 	}
 	free(stash);
 	return (buffer);
 }
 
-char	*set_buff(char *buffer)
+static char	*set_buff(char *buffer)
 {
 	char	*temp;
 	int		i;
@@ -76,7 +74,7 @@ char	*set_buff(char *buffer)
 	return (temp);
 }
 
-char	*clean_line(char *buffer)
+static char	*clean_line(char *buffer)
 {
 	int		i;
 	char	*line;
@@ -112,7 +110,6 @@ char	*get_next_line(int fd)
 	if (!buffer || buffer[0] == '\0')
 	{
 		free(buffer);
-		buffer = NULL;
 		return (NULL);
 	}
 	line = clean_line(buffer);
