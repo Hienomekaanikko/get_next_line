@@ -6,7 +6,7 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/09 14:20:46 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/10 14:30:22 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,19 @@
 
 static char	*add_to_buff(char *buffer, char *stash)
 {
-	char	*temp;
+	size_t	buffer_len;
+	size_t	stash_len;
+	char	*new_str;
 
-	temp = ft_strjoin(buffer, stash);
+	buffer_len = ft_strlen(buffer);
+	stash_len = ft_strlen(stash);
+	new_str = malloc((buffer_len + stash_len + 1) * sizeof(char));
+	if (!new_str)
+		return (NULL);
+	ft_memcpy(new_str, buffer, buffer_len);
+	ft_memcpy(new_str + buffer_len, stash, stash_len + 1);
 	free(buffer);
-	return (temp);
+	return (new_str);
 }
 
 static char	*read_text(int fd, char *buffer)
@@ -33,11 +41,8 @@ static char	*read_text(int fd, char *buffer)
 	while (bytes_read > 0 && (!ft_strchr(buffer, '\n')))
 	{
 		bytes_read = read(fd, stash, BUFFER_SIZE);
-		if (bytes_read == -1)
-		{
-			free(stash);
-			return (NULL);
-		}
+		if (bytes_read < 1)
+			break ;
 		stash[bytes_read] = '\0';
 		buffer = add_to_buff(buffer, stash);
 	}
@@ -47,9 +52,9 @@ static char	*read_text(int fd, char *buffer)
 
 static char	*set_buff(char *buffer)
 {
-	char	*temp;
-	int		i;
-	int		j;
+	char		*temp;
+	size_t		i;
+	size_t		j;
 
 	i = 0;
 	while (buffer[i] && buffer[i] != '\n')
@@ -76,8 +81,8 @@ static char	*set_buff(char *buffer)
 
 static char	*clean_line(char *buffer)
 {
-	int		i;
-	char	*line;
+	size_t		i;
+	char		*line;
 
 	i = 0;
 	while (buffer[i] && buffer[i] != '\n')
@@ -110,6 +115,7 @@ char	*get_next_line(int fd)
 	if (!buffer || buffer[0] == '\0')
 	{
 		free(buffer);
+		buffer = NULL;
 		return (NULL);
 	}
 	line = clean_line(buffer);
