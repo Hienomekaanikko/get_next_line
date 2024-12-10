@@ -6,12 +6,16 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:46:36 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/10 14:31:52 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/10 16:44:46 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+
+# ifndef BUFFER_SIZE
+#  define  BUFFER_SIZE 1234
+# endif
 
 # include <stdlib.h>
 # include <unistd.h>
