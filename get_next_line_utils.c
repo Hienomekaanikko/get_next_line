@@ -6,11 +6,47 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:13:29 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/10 14:00:29 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/11 18:23:59 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+void	*ft_memcpy(void *dst, const void *src, size_t n)
+{
+	size_t				i;
+	unsigned char		*dest;
+	const unsigned char	*source;
+
+	dest = dst;
+	source = src;
+	i = 0;
+	if (!dst && !src)
+		return (NULL);
+	while (i < n)
+	{
+		dest[i] = source[i];
+		i++;
+	}
+	return (dst);
+}
+
+char	*ft_strjoin(char *dest, char *src)
+{
+	size_t	dest_len;
+	size_t	src_len;
+	char	*new_str;
+
+	dest_len = ft_strlen(dest);
+	src_len = ft_strlen(src);
+	new_str = malloc((dest_len + src_len + 1) * sizeof(char));
+	if (!new_str)
+		return (NULL);
+	ft_memcpy(new_str, dest, dest_len);
+	ft_memcpy(new_str + dest_len, src, src_len + 1);
+	free(dest);
+	return (new_str);
+}
 
 char	*ft_strdup(const char *s)
 {
@@ -61,23 +97,4 @@ size_t	ft_strlen(const char *str)
 		str++;
 	}
 	return (count);
-}
-
-void	*ft_memcpy(void *dst, const void *src, size_t n)
-{
-	size_t				i;
-	unsigned char		*dest;
-	const unsigned char	*source;
-
-	dest = dst;
-	source = src;
-	i = 0;
-	if (!dst && !src)
-		return (NULL);
-	while (i < n)
-	{
-		dest[i] = source[i];
-		i++;
-	}
-	return (dst);
 }

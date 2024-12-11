@@ -6,33 +6,16 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/10 14:08:02 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/11 18:32:03 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*add_to_buff(char *buffer, char *stash)
-{
-	size_t	buffer_len;
-	size_t	stash_len;
-	char	*new_str;
-
-	buffer_len = ft_strlen(buffer);
-	stash_len = ft_strlen(stash);
-	new_str = malloc((buffer_len + stash_len + 1) * sizeof(char));
-	if (!new_str)
-		return (NULL);
-	ft_memcpy(new_str, buffer, buffer_len);
-	ft_memcpy(new_str + buffer_len, stash, stash_len + 1);
-	free(buffer);
-	return (new_str);
-}
-
 static char	*read_text(int fd, char *buffer)
 {
 	char	*stash;
-	ssize_t	bytes_read;
+	int		bytes_read;
 
 	stash = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!stash)
@@ -41,10 +24,14 @@ static char	*read_text(int fd, char *buffer)
 	while (bytes_read > 0 && (!ft_strchr(buffer, '\n')))
 	{
 		bytes_read = read(fd, stash, BUFFER_SIZE);
-		if (bytes_read < 1)
-			break ;
+		if (bytes_read == -1)
+		{
+			free(buffer);
+			free(stash);
+			return (NULL);
+		}
 		stash[bytes_read] = '\0';
-		buffer = add_to_buff(buffer, stash);
+		buffer = ft_strjoin(buffer, stash);
 	}
 	free(stash);
 	return (buffer);
@@ -66,10 +53,7 @@ static char	*set_buff(char *buffer)
 	}
 	temp = malloc((ft_strlen(buffer) - i + 1) * sizeof(char));
 	if (!temp)
-	{
-		free (buffer);
 		return (NULL);
-	}
 	i++;
 	j = 0;
 	while (buffer[i])
