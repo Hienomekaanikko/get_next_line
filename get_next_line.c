@@ -6,11 +6,21 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/11 18:32:03 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:51:41 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static char	*buff_check(char *buffer)
+{
+	if (!buffer)
+	{
+		free(buffer);
+		return (NULL);
+	}
+	return (buffer);
+}
 
 static char	*read_text(int fd, char *buffer)
 {
@@ -26,12 +36,15 @@ static char	*read_text(int fd, char *buffer)
 		bytes_read = read(fd, stash, BUFFER_SIZE);
 		if (bytes_read == -1)
 		{
-			free(buffer);
 			free(stash);
+			free(buffer);
 			return (NULL);
 		}
 		stash[bytes_read] = '\0';
 		buffer = ft_strjoin(buffer, stash);
+		buffer = buff_check(buffer);
+		if (!buffer)
+			break ;
 	}
 	free(stash);
 	return (buffer);
@@ -94,7 +107,11 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!buffer)
+	{
 		buffer = ft_strdup("");
+		if (!buffer)
+			return (NULL);
+	}
 	buffer = read_text(fd, buffer);
 	if (!buffer || buffer[0] == '\0')
 	{
