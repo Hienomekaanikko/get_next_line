@@ -121,5 +121,8 @@ char	*get_next_line(int fd)
 	}
 	line = clean_line(buffer);
 	buffer = set_buff(buffer);
+	//TEST THIS FOR THE 3rd problem. So that in case set_buff fails, it wont return incomplete output.
+	//if (!buffer)
+	//	return (NULL);
 	return (line);
 }
