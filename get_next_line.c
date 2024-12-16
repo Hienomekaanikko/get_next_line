@@ -6,21 +6,11 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 13:45:59 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/12 16:51:41 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/16 16:25:21 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-static char	*buff_check(char *buffer)
-{
-	if (!buffer)
-	{
-		free(buffer);
-		return (NULL);
-	}
-	return (buffer);
-}
 
 static char	*read_text(int fd, char *buffer)
 {
@@ -31,7 +21,7 @@ static char	*read_text(int fd, char *buffer)
 	if (!stash)
 		return (NULL);
 	bytes_read = 1;
-	while (bytes_read > 0 && (!ft_strchr(buffer, '\n')))
+	while (buffer && bytes_read > 0 && (!ft_strchr(buffer, '\n')))
 	{
 		bytes_read = read(fd, stash, BUFFER_SIZE);
 		if (bytes_read == -1)
@@ -42,23 +32,28 @@ static char	*read_text(int fd, char *buffer)
 		}
 		stash[bytes_read] = '\0';
 		buffer = ft_strjoin(buffer, stash);
-		buffer = buff_check(buffer);
-		if (!buffer)
-			break ;
 	}
 	free(stash);
 	return (buffer);
 }
 
-static char	*set_buff(char *buffer)
+static int	count_len(char *buffer)
+{
+	size_t	i;
+
+	i = 0;
+	while (buffer[i] && buffer[i] != '\n')
+		i++;
+	return (i);
+}
+
+static char	*set_buff(char *buffer, int *sign)
 {
 	char		*temp;
 	size_t		i;
 	size_t		j;
 
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
+	i = count_len(buffer);
 	if (!buffer[i])
 	{
 		free(buffer);
@@ -66,7 +61,11 @@ static char	*set_buff(char *buffer)
 	}
 	temp = malloc((ft_strlen(buffer) - i + 1) * sizeof(char));
 	if (!temp)
+	{
+		*sign = 0;
+		free(buffer);
 		return (NULL);
+	}
 	i++;
 	j = 0;
 	while (buffer[i])
@@ -81,9 +80,7 @@ static char	*clean_line(char *buffer)
 	size_t		i;
 	char		*line;
 
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
+	i = count_len(buffer);
 	line = malloc((i + 2) * sizeof(char));
 	if (!line)
 		return (NULL);
@@ -103,15 +100,13 @@ char	*get_next_line(int fd)
 {
 	static char	*buffer;
 	char		*line;
+	int			sign;
 
+	sign = 1;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!buffer)
-	{
 		buffer = ft_strdup("");
-		if (!buffer)
-			return (NULL);
-	}
 	buffer = read_text(fd, buffer);
 	if (!buffer || buffer[0] == '\0')
 	{
@@ -120,9 +115,11 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	line = clean_line(buffer);
-	buffer = set_buff(buffer);
-	//TEST THIS FOR THE 3rd problem. So that in case set_buff fails, it wont return incomplete output.
-	//if (!buffer)
-	//	return (NULL);
+	buffer = set_buff(buffer, &sign);
+	if (sign == 0)
+	{
+		free(line);
+		return (NULL);
+	}
 	return (line);
 }

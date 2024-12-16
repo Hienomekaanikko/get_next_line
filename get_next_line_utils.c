@@ -6,7 +6,7 @@
 /*   By: msuokas <msuokas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:13:29 by msuokas           #+#    #+#             */
-/*   Updated: 2024/12/12 13:52:30 by msuokas          ###   ########.fr       */
+/*   Updated: 2024/12/16 10:14:33 by msuokas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,10 @@ char	*ft_strjoin(char *dest, char *src)
 	src_len = ft_strlen(src);
 	new_str = malloc((dest_len + src_len + 1) * sizeof(char));
 	if (!new_str)
+	{
+		free(dest);
 		return (NULL);
+	}
 	ft_memcpy(new_str, dest, dest_len);
 	ft_memcpy(new_str + dest_len, src, src_len + 1);
 	free(dest);
